@@ -26,7 +26,7 @@ cartsRouter.post('/', async(req,res) => {
 })
 
 cartsRouter.post('/:cid/product/:pid', async(req,res) => {
-    // try {
+    try {
         let cart = await cartsModel.findById({_id:req.params.cid})
         if(!cart){
             return res.send({result:'error',error:'carrito no encontrado'})
@@ -37,34 +37,27 @@ cartsRouter.post('/:cid/product/:pid', async(req,res) => {
             return res.send({result:'error', error:'producto no encontrado'})
         }
 
-        // let productCart = cart.products.findIndex(p => p.product._id.toString() === req.params.pid.toString())
+        let productCart = cart.products.findIndex(p => p.product._id.toString() === req.params.pid.toString())
         
-        // console.log(productCart)
+        console.log(productCart)
         // // console.log(product)
 
-        // if(productCart === -1) {
-        //     cart.products.push({product:product, quantity:1}) 
+        if(productCart === -1) {
+            cart.products.push({product:product, quantity:1}) 
             
-        // }else {
-        //     // cart.products[productCart].quantity++
-        //     let cantidad = cart.products[productCart].quantity 
-        //     console.log(cart.products[productCart].quantity)
-        //     if (cantidad ===  undefined || cantidad === NaN || cantidad === 0) {
-        //      cantidad = 1
-        //     }
-        //     cart.products[productCart].quantity = ++ cantidad 
-        // }
-        // console.log(cart.products[productCart].quantity)
+        }else {
+            cart.products[productCart].quantity++
+            console.log(cart.products[productCart].quantity)
+        }
 
          
         let result = await cartsModel.updateOne({_id:req.params.cid}, cart) 
-            // {$set: {products: cart[0].products}})
         res.send({result:'succes', payload:result})
         
         
-    // } catch (error) {
-    //     res.status(400).json({error:'Producto o carrito no encontrado'})    
-    // }
+    } catch (error) {
+        res.status(400).json({error:'Producto o carrito no encontrado'})    
+    }
 })
 
 cartsRouter.delete('/:cid', async(req,res) => {
